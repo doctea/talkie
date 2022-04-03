@@ -1,14 +1,46 @@
+// https://www.voltlog.com/pub/Iflytek-XFS5152CE_english_datasheet.pdf
+// https://forum.arduino.cc/t/text-to-speech-project/303514/11
+
 #include <SoftwareSerial.h>
 SoftwareSerial ss(7, 8); // rx, tx
 #define OUTPUT_SERIAL ss
 
 void setup_voice() {
   OUTPUT_SERIAL.begin(115200);
-  
+
 }
 
 class Voice {  
 public: 
+
+  char words[10][10] = {
+    //"better", "faster", "harder", "danger", "fire"
+    //"You're", "not ", "alone", ", Powers", ", ", "don't ", "think ", "you ", "are", ". ", "These ", "are ", "the ", "voices ", "of ", "time", ", ", "and ", "they're ", "all ", "saying ", "goodbye ", "to ", "you ", "... ", "every ", "particle ", "in ", "your ", "body", ", ", "every ", "grain ", "of ", "sand", "every ", "galaxy ", "carries ", "the ", "same ", "signature ", "... ", "you ", "know ", "what ", "the ", "time ", "is ";
+  };
+
+  char word[20];
+  char *get_next_word() {
+    static int pointer;
+    static const char *words = "Deep Time: 1,000,000 mega-years. I saw the Milky Way, a wheeling carousel of fire, and Earth's remote descendants, countless races inhabiting every stellar system in the galaxy. The dark intervals between the stars were a continuously flickering field of light, a gigantic phosphorescent ocean, filled with the vibrating pulses of electromagnetic communication pathways. To cross the enormous voids between the stars they have progressively slowed their physiological time, first ten, then a hundred-fold, so accelerating stellar and galactic time. Space has become alive with transient swarms of comets and meteors, the constellations have begun to dislocate and shift, the slow majestic rotation of the universe itself is at last visible.";
+    static const int len = strlen(words);
+
+    int i = 0;
+    for (i = 0 ; i < len ; i++) {
+      word[i] = words[pointer+i];
+      if (word[i]==' ' || word[i]=='\0') { //i+pointer>=len) { //strlen(words)) {
+        pointer = pointer+i+1;
+        word[i+1] = '\0';
+        if (i+pointer>len)
+          pointer = 0;
+        Serial.println(word);
+        return word[0];
+      }
+    }
+    word[i] = '\0';
+    pointer = 0;
+    return word[0];
+  }
+    
 
   void loop() {
     bool done = false;
@@ -17,168 +49,51 @@ public:
       Serial.print("received: ");
       Serial.print(rc);
       Serial.print(" (");
-      Serial.println((byte)rc);
+      Serial.print((byte)rc);
       Serial.println(")");
       if ( rc == 0x4F ) {  
         done = true;
+        speaking = false;
         break;
       }
     }
   }
 
-  void send_text_command_cache_test_1() {
-    OUTPUT_SERIAL.write(0xFD);
-    OUTPUT_SERIAL.write((byte)0x00);
-    OUTPUT_SERIAL.write(0x14);
-    OUTPUT_SERIAL.write(0x31);
-    //OUTPUT_SERIAL.write(0x03);
-    OUTPUT_SERIAL.write(0b00110001);
-    OUTPUT_SERIAL.write(0xB6);
-    OUTPUT_SERIAL.write(0xCE);
-    OUTPUT_SERIAL.write(0xBB);
-    OUTPUT_SERIAL.write(0xBA);
-    OUTPUT_SERIAL.write(0xB4);
-    OUTPUT_SERIAL.write(0xE6);
-    OUTPUT_SERIAL.write(0xBA);
-    OUTPUT_SERIAL.write(0xF3);
-    OUTPUT_SERIAL.write(0xD2);
-    OUTPUT_SERIAL.write(0xBB);
-    OUTPUT_SERIAL.write(0xC6);
-    OUTPUT_SERIAL.write(0xF0);
-    OUTPUT_SERIAL.write(0xB2);
-    OUTPUT_SERIAL.write(0xA5);
-    OUTPUT_SERIAL.write(0xB7);
-    OUTPUT_SERIAL.write(0xC5);
-    OUTPUT_SERIAL.write(0xA1);
-    OUTPUT_SERIAL.write(0xA3);
-  }
 
-  void send_text_command_cache_test_2() {
-    OUTPUT_SERIAL.write(0xFD);
-    OUTPUT_SERIAL.write((byte)0x00);
-    OUTPUT_SERIAL.write(0x12);
-    OUTPUT_SERIAL.write(0x31);
-    OUTPUT_SERIAL.write(0b00110000);
-    OUTPUT_SERIAL.write(0xB4);
-    OUTPUT_SERIAL.write(0xF2);
-    OUTPUT_SERIAL.write(0xC2);
-    OUTPUT_SERIAL.write(0xD2);
-    OUTPUT_SERIAL.write(0xCB);
-    OUTPUT_SERIAL.write(0xB3);
-    OUTPUT_SERIAL.write(0xD0);
-    OUTPUT_SERIAL.write(0xF2);
-    OUTPUT_SERIAL.write(0xB5);
-    OUTPUT_SERIAL.write(0xC4);
-    OUTPUT_SERIAL.write(0xD2);
-    OUTPUT_SERIAL.write(0xBB);
-    OUTPUT_SERIAL.write(0xB6);
-    OUTPUT_SERIAL.write(0xCE);
-    OUTPUT_SERIAL.write(0xCE);
-    OUTPUT_SERIAL.write(0xC4);
-  }
-
-  void send_text_command_cache_test_3() {
-    OUTPUT_SERIAL.write(0xFD);
-    OUTPUT_SERIAL.write((byte)0x00);
-    OUTPUT_SERIAL.write(0x10);
-    OUTPUT_SERIAL.write(0x31);
-    //OUTPUT_SERIAL.write(0x03);
-    OUTPUT_SERIAL.write(0b00010000);
-    OUTPUT_SERIAL.write(0xB4);
-    OUTPUT_SERIAL.write(0xCB);
-    OUTPUT_SERIAL.write(0xB9);
-    OUTPUT_SERIAL.write(0xA6);
-    OUTPUT_SERIAL.write(0xC4);
-    OUTPUT_SERIAL.write(0xDC);
-    OUTPUT_SERIAL.write(0xBF);
-    OUTPUT_SERIAL.write(0xC9);
-    OUTPUT_SERIAL.write(0xD2);
-    OUTPUT_SERIAL.write(0xD4);
-    OUTPUT_SERIAL.write(0xBD);
-    OUTPUT_SERIAL.write(0xAB);
-    OUTPUT_SERIAL.write(0xB1);
-    OUTPUT_SERIAL.write(0xBB);
-  }
-
-
-  void send_text_command_cache_test_4() {
-    OUTPUT_SERIAL.write(0xFD);
-    OUTPUT_SERIAL.write((byte)0x00);
-    OUTPUT_SERIAL.write(0x16);
-    OUTPUT_SERIAL.write(0x31);
-    //OUTPUT_SERIAL.write(0x03);
-    OUTPUT_SERIAL.write(0b00010000);
-    OUTPUT_SERIAL.write(0xB1);
-    OUTPUT_SERIAL.write(0xBE);
-    OUTPUT_SERIAL.write(0xB0);
-    OUTPUT_SERIAL.write(0xB4);
-    OUTPUT_SERIAL.write(0xBF);
-    OUTPUT_SERIAL.write(0xCD);
-    OUTPUT_SERIAL.write(0xBB);
-    OUTPUT_SERIAL.write(0xA7);
-    OUTPUT_SERIAL.write(0xCF);
-    OUTPUT_SERIAL.write(0xA3);
-    OUTPUT_SERIAL.write(0xCD);
-    OUTPUT_SERIAL.write(0xFB);
-    OUTPUT_SERIAL.write(0xB5);
-    OUTPUT_SERIAL.write(0xC4);
-    OUTPUT_SERIAL.write(0xCB);
-    OUTPUT_SERIAL.write(0xB7);
-    OUTPUT_SERIAL.write(0xD0);
-    OUTPUT_SERIAL.write(0xF2);
-    OUTPUT_SERIAL.write(0xB7);
-    OUTPUT_SERIAL.write(0xD6);
-  }
-
-  void send_text_command_cache_test_5() {
-    OUTPUT_SERIAL.write(0xFD);
-    OUTPUT_SERIAL.write((byte)0x00);
-    OUTPUT_SERIAL.write(0x01);
-    OUTPUT_SERIAL.write(0x32);
-    //OUTPUT_SERIAL.write(0x03);
-    //OUTPUT_SERIAL.write(0x01);
-    OUTPUT_SERIAL.write(0b00010001);
-
-    OUTPUT_SERIAL.write(0xFD);
-    OUTPUT_SERIAL.write((byte)0x00);
-    OUTPUT_SERIAL.write(0x01);
-    OUTPUT_SERIAL.write(0x32);
-    //OUTPUT_SERIAL.write(0x03);
-    //OUTPUT_SERIAL.write(0x01);
-    OUTPUT_SERIAL.write(0b00110001);
-    
-  }
-  
-
-  void cache_text(char* msg) {
+  void cache_text(byte location, char* msg) {
     OUTPUT_SERIAL.write(0xFD);
     OUTPUT_SERIAL.write((byte)0x0);
     OUTPUT_SERIAL.write(2 + strlen(msg));
     OUTPUT_SERIAL.write(0x31);
-    OUTPUT_SERIAL.write((byte)0x01);
+    //OUTPUT_SERIAL.write((byte)0x00);
+    //OUTPUT_SERIAL.write((location << 4) | 0x00);
+    OUTPUT_SERIAL.write(0b00110011);
     OUTPUT_SERIAL.write(msg);
     Serial.print ("cached ");
     Serial.println(msg);
   }
 
-  void play_cache(int place) {
-    send_text_command_cache_test_3();
-    /*
+  void play_cache(byte location) {
+    //send_text_command_cache_test_3();
     OUTPUT_SERIAL.write(0xFD);
     OUTPUT_SERIAL.write((byte)0x0);
-    //OUTPUT_SERIAL.write(2 + strlen(msg));
+    OUTPUT_SERIAL.write(2); // + strlen(msg));
     OUTPUT_SERIAL.write(0x32);
-    //OUTPUT_SERIAL.write((byte)0x0);
+    //OUTPUT_SERIAL.write((byte)0x00);
+    OUTPUT_SERIAL.write(0b00110011);
+    //OUTPUT_SERIAL.write((location << 4) | 0x00);
     //OUTPUT_SERIAL.write(msg);
-    OUTPUT_SERIAL.write(place);*/
   }
 
   void speak(char* msg) {
+    speaking = true;
+    static char *format = "[m52][t0][n0][s3][v10][g2][p0]";
     OUTPUT_SERIAL.write(0xFD);
-    OUTPUT_SERIAL.write((byte)0x0);
-    OUTPUT_SERIAL.write(2 + strlen(msg));
+    OUTPUT_SERIAL.write((byte)0x00);
+    OUTPUT_SERIAL.write(2 + strlen(msg) + strlen(format));
     OUTPUT_SERIAL.write(0x01);
-    OUTPUT_SERIAL.write((byte)0x0);
+    OUTPUT_SERIAL.write((byte)0x00);
+    OUTPUT_SERIAL.write(format);
     OUTPUT_SERIAL.write(msg);
   }
   
@@ -198,15 +113,21 @@ public:
     }
   }
 
+  bool speaking = false;
   void gate_on() {
     //speak("[x0][t6][v10][s6][m51][g2][h2][n1]Beat!");
-    //speak("[m55][t5][n2][s6]Beat!");
-    char buf[64];
-    static byte count = 1;
+    //speak("Beat![m55][t5][n2][s6]");
+    //char buf[64];
+    static byte count = 0;
     //sprintf( buf, "[m55][t5][n2][s6]Check %d. Battery is %d percent charged.", count, random(1, 100));
-    sprintf(buf, "%d", count++);
-    
-    if (count>4) count = 1;
+    //sprintf(buf, "%d", count++);
+    if (count>sizeof(words)/10) count = 0;
+    //speak(words[count++]);
+
+    if (!speaking) {
+      get_next_word();
+      speak(word); //*get_next_word());
+    }
     //speak("Beat!");
     //speak(buf);
     //play_cache(count);

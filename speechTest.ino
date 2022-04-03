@@ -8,7 +8,7 @@ void setup() {
   Serial.begin(115200);
   setup_voice();
   //voice.cache_text("this is a test of trying to cache some speech i wonder if it is going to work?");
-  voice.send_text_command_cache_test_1();
+  /*voice.send_text_command_cache_test_1();
   delay(250);
   voice.send_text_command_cache_test_2();
   delay(250);
@@ -16,9 +16,18 @@ void setup() {
   delay(250);
   voice.send_text_command_cache_test_4();
   delay(250);
-  voice.send_text_command_cache_test_5();
+  voice.send_text_command_cache_test_5();*/
+
+  voice.cache_text(0, "[x0][t6][v10][s6][m51][g2][h2][n1]Hello!");
+  voice.cache_text(1, "[x0][t6][v10][s6][m51][g2][h2][n1]BEAT!");
+  voice.cache_text(2, "[x0][t6][v10][s6][m51][g2][h2][n1]BOOSH!");
+  voice.cache_text(3, "[x0][t6][v10][s6][m51][g2][h2][n1]FAP!");
+  
+  //voice.speak("[x0][t6][v10][s6][m51][g2][h2][n1]Hello! I force 2d is the greatest.");
+  
+  //unused();
   Serial.println("did startup");
-  delay(250);
+  delay(2500);
 }
 
 void loop() {
