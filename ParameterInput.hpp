@@ -5,7 +5,7 @@ class ParameterInput {
     int inputPin;
     Envelope *target;
     char name;
-    bool debug = true;
+    bool debug = false;
 
     ParameterInput() {
       name = NEXT_PARAMETER_NAME++;
@@ -57,6 +57,7 @@ class AnalogParameterInput : public ParameterInput {
 
   int lastValue = 0;
   byte envelope_number = 0xff;
+  byte parameter_number = 0xff;
 
   public:
     using Callback = void (*)(float);
@@ -75,6 +76,13 @@ class AnalogParameterInput : public ParameterInput {
       inputPin = in_inputPin;
       target = &in_target;
       sensitivity = in_sensitivity;
+      pinMode(inputPin, INPUT);
+    }
+    AnalogParameterInput(int in_inputPin, Envelope &in_target, byte in_parameter_number, int in_sensitivity = 3) : ParameterInput() {
+      inputPin = in_inputPin;
+      target = &in_target;
+      sensitivity = in_sensitivity;
+      parameter_number = in_parameter_number;
       pinMode(inputPin, INPUT);
     }
     AnalogParameterInput(int in_inputPin, byte in_envelope_number, int in_sensitivity = 3) : ParameterInput() {
@@ -122,7 +130,15 @@ class AnalogParameterInput : public ParameterInput {
             if (inverted) Serial.print(F(" - inverted"));
             Serial.println();
           }
-          target->setParamValueA(normal);
+          if (parameter_number!=0xff) {
+            Serial.print("calling setParamValue(");
+            Serial.print(parameter_number);
+            Serial.print(", ");
+            Serial.print(normal);
+            Serial.println(")");
+            target->setParamValue(parameter_number, normal);
+          } else
+            target->setParamValueA(normal);
         }
         //if (envelope_number!=0xff)
           //envelopes[envelope_number]->setParamValueA(get_normal_value(currentValue));

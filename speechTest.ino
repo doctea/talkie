@@ -6,7 +6,8 @@
 Voice voice = Voice();
 AnalogGateInput gate = AnalogGateInput(A0, voice);
 
-AnalogParameterInput param = AnalogParameterInput(A1, voice);
+AnalogParameterInput param0 = AnalogParameterInput(A1, voice, (byte)0, 3);
+AnalogParameterInput param1 = AnalogParameterInput(A2, voice, (byte)1, 3);
 
 void setup() {
   Serial.begin(115200);
@@ -31,11 +32,12 @@ void setup() {
   
   //unused();
   Serial.println("did startup");
-  delay(2500);
+  delay(250);
 }
 
 void loop() {
-  param.loop();
+  param0.loop();
+  param1.loop();
   gate.loop();
 
   voice.loop();

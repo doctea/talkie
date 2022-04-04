@@ -14,6 +14,7 @@ class Voice {
 public: 
 
   byte param_speed = 3;
+  byte param_tone = 5;
 
   char words[10][10] = {
     //"better", "faster", "harder", "danger", "fire"
@@ -43,9 +44,36 @@ public:
     return word[0];
   }
 
+  char *get_next_sentence() {
+    static int pointer;
+    static char *words = "Deep Time. 1,000,000 mega-years. I saw the Milky Way, a wheeling carousel of fire, and Earth's remote descendants, countless races inhabiting every stellar system in the galaxy. The dark intervals between the stars were a continuously flickering field of light, a gigantic phosphorescent ocean, filled with the vibrating pulses of electromagnetic communication pathways. To cross the enormous voids between the stars they have progressively slowed their physiological time, first ten, then a hundred-fold, so accelerating stellar and galactic time. Space has become alive with transient swarms of comets and meteors, the constellations have begun to dislocate and shift, the slow majestic rotation of the universe itself is at last visible.";
+    static const int len = strlen(words);
+
+    for (int i = 0 ; i < len ; i++) {
+      if ((words[i+pointer]==','&&words[i+pointer+1]==' ') || words[i+pointer]=='.' || words[i+pointer]=='\0') {
+        //pointer+=i;
+        words[i+pointer] = '\0';
+        char *start = &words[pointer+1];
+        Serial.println(start);
+        pointer+=i+1;
+        return start;
+      }
+    }
+    pointer = 0;
+    return words[0];
+  }
+
   void setParamValueA(float normal) {
     param_speed = 10 * normal;
   }
+  void setParamValue(byte parameter_number, float normal) {
+    if (parameter_number==0) {
+      param_speed = 10 * normal;
+    } else if (parameter_number==1) {
+      param_tone = 10 * normal;
+    }
+  }
+  
 
   void loop() {
     bool done = false;
@@ -94,7 +122,7 @@ public:
     speaking = true;
     //static char *format = "[h2][m52][t0][n0][s3][v10][g2][p0]";
     static char format[40];// = "[h2][m52][t%i][n0][s%i][v10][g2][p0]asdfasdf";
-    sprintf(format, "[h2][m52][t%i][n0][s%i][v10][g2][p0]", 10-param_speed, param_speed);
+    sprintf(format, "[h2][m52][t%i][n0][s%i][v10][g2][p0]", param_tone, param_speed);
     Serial.print("Sending format ");
     Serial.println(format);
     OUTPUT_SERIAL.write(0xFD);
@@ -134,8 +162,9 @@ public:
     //speak(words[count++]);
 
     if (!speaking) {
-      get_next_word();
-      speak(word); //*get_next_word());
+      //get_next_word();
+      //speak(word); //*get_next_word());
+      speak(get_next_sentence());
     }
     //speak("Beat!");
     //speak(buf);
