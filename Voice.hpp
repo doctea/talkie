@@ -13,6 +13,8 @@ void setup_voice() {
 class Voice {  
 public: 
 
+  byte param_speed = 3;
+
   char words[10][10] = {
     //"better", "faster", "harder", "danger", "fire"
     //"You're", "not ", "alone", ", Powers", ", ", "don't ", "think ", "you ", "are", ". ", "These ", "are ", "the ", "voices ", "of ", "time", ", ", "and ", "they're ", "all ", "saying ", "goodbye ", "to ", "you ", "... ", "every ", "particle ", "in ", "your ", "body", ", ", "every ", "grain ", "of ", "sand", "every ", "galaxy ", "carries ", "the ", "same ", "signature ", "... ", "you ", "know ", "what ", "the ", "time ", "is ";
@@ -40,7 +42,10 @@ public:
     pointer = 0;
     return word[0];
   }
-    
+
+  void setParamValueA(float normal) {
+    param_speed = 10 * normal;
+  }
 
   void loop() {
     bool done = false;
@@ -87,7 +92,11 @@ public:
 
   void speak(char* msg) {
     speaking = true;
-    static char *format = "[m52][t0][n0][s3][v10][g2][p0]";
+    //static char *format = "[h2][m52][t0][n0][s3][v10][g2][p0]";
+    static char format[40];// = "[h2][m52][t%i][n0][s%i][v10][g2][p0]asdfasdf";
+    sprintf(format, "[h2][m52][t%i][n0][s%i][v10][g2][p0]", 10-param_speed, param_speed);
+    Serial.print("Sending format ");
+    Serial.println(format);
     OUTPUT_SERIAL.write(0xFD);
     OUTPUT_SERIAL.write((byte)0x00);
     OUTPUT_SERIAL.write(2 + strlen(msg) + strlen(format));

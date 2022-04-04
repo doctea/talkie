@@ -1,8 +1,12 @@
 #include "Voice.hpp"
+#define Envelope Voice
 #include "GateInput.hpp"
+#include "ParameterInput.hpp"
 
 Voice voice = Voice();
 AnalogGateInput gate = AnalogGateInput(A0, voice);
+
+AnalogParameterInput param = AnalogParameterInput(A1, voice);
 
 void setup() {
   Serial.begin(115200);
@@ -31,6 +35,7 @@ void setup() {
 }
 
 void loop() {
+  param.loop();
   gate.loop();
 
   voice.loop();
