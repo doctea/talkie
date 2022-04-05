@@ -6,8 +6,8 @@
 Voice voice = Voice();
 AnalogGateInput gate = AnalogGateInput(A0, voice);
 
-AnalogParameterInput param0 = AnalogParameterInput(A1, voice, (byte)0, 3);
-AnalogParameterInput param1 = AnalogParameterInput(A2, voice, (byte)1, 3);
+AnalogParameterInput param0 = AnalogParameterInput(A1, voice, (byte)0, 6);
+AnalogParameterInput param1 = AnalogParameterInput(A2, voice, (byte)1, 6);
 
 void setup() {
   Serial.begin(115200);
