@@ -1,4 +1,4 @@
-
+/*
   void send_text_command_cache_test_1() {
     OUTPUT_SERIAL.write(0xFD);
     OUTPUT_SERIAL.write((byte)0x00);
@@ -121,4 +121,4 @@
     OUTPUT_SERIAL.write(0b00110001);
     
   }
-  
+  */

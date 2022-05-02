@@ -18,7 +18,7 @@ class GateInput {
     unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
     unsigned long debounceDelay = 5;    // the debounce time; increase if the output flickers   
 
-    bool debug = false;
+    bool debug = true;
 
   public:
     char name;
@@ -26,7 +26,7 @@ class GateInput {
     
     GateInput() {
       name = NEXT_GATE_INPUT_NAME++;
-      Serial.print("Instantiated GateInput named ");
+      Serial.print(F("Instantiated GateInput named "));
       Serial.print(name);
     }
     GateInput(int in_inputPin, Voice &in_target) 
@@ -35,11 +35,11 @@ class GateInput {
       pinMode(inputPin, INPUT);
 
       target = &in_target;
-      Serial.print("GateInput instantiated with name ");
+      Serial.print(F("GateInput instantiated with name "));
       Serial.print(name);
-      Serial.print(" and pin ");
+      Serial.print(F(" and pin "));
       Serial.print(inputPin);
-      Serial.print(", passed Voice ");
+      Serial.print(F(", passed Voice "));
       Serial.println((uint32_t) target);
       //gate_on_callback = in_gate_on_callback;
       //gate_off_callback = in_gate_off_callback;
@@ -50,11 +50,11 @@ class GateInput {
       pinMode(inputPin, INPUT);
       gate_on_callback = in_gate_on_callback;
       gate_off_callback = in_gate_off_callback;
-      Serial.print("GateInput instantiated with name ");
+      Serial.print(F("GateInput instantiated with name "));
       Serial.print(name);
-      Serial.print(" and pin ");
+      Serial.print(F(" and pin "));
       Serial.print(inputPin);
-      Serial.println(", passed callbacks ");
+      Serial.println(F(", passed callbacks "));
     }
 
     void setDebug() {
@@ -65,6 +65,7 @@ class GateInput {
     virtual bool read_value() {};
 
     void loop() {
+      //Serial.println(F("gate loop start"));
       /*if (debug) {
         Serial.print(name);
         Serial.print(": GateInput loop() called ");
@@ -73,6 +74,7 @@ class GateInput {
       /*if (reading) {
         Serial.println("high?");
       }*/
+      //Serial.println(F("gate loop about to readvalue"));
       bool reading = read_value();
     
       bool changed = false;
@@ -84,7 +86,8 @@ class GateInput {
       }
     
       last_read_state = reading;
-    
+
+      //Serial.println(F("gate loop about to check debounce"));
       if ((millis() - lastDebounceTime) > debounceDelay) {
         // whatever the reading is at, it's been there for longer than the debounce
         // delay, so take it as the actual current state:
@@ -104,44 +107,48 @@ class GateInput {
           }   
         }
       }
-    
+
+      //Serial.print(F("gate loop about to check changed, which is "));
+      //Serial.println(changed);
       if (changed) {
+        /*Serial.println(F("gate loop changed branch"));
         if (debug) {
           Serial.print(name);
           Serial.println(F(": GateInput changed!"));
-        }
+        }*/
         if (triggered) {
-          //Serial.println("==== Gate start");
+          //Serial.println(F("==== Gate triggered"));
+          tft.println("triggered!");
           if (gate_on_callback != NULL) {
-            if (debug) {
+            /*if (debug) {
               Serial.print(name);
               Serial.println(F(": calling gate_on_callback"));
-            }
+            }*/
             gate_on_callback();
           }
           if (target) {
-            if (debug) {
+            /*if (debug) {
               Serial.print(name);
               Serial.print(F(": calling gate_on against "));
               Serial.println((uint32_t) &target);
-            }
+            }*/
             target->gate_on();
           }
           //Voices[1]->gate_on();
         } else {
-          //Serial.println("==== Gate stop");
+          //Serial.println("==== Gate stopped");
           if (gate_off_callback != NULL) {
             if (debug) {
-              Serial.print(name);
-              Serial.println(F(": calling gate_off_callback"));
+              //Serial.print(name);
+              //Serial.println(F(": calling gate_off_callback"));
             }
             gate_off_callback();
           }
           if (target) {
             if (debug) {
-              Serial.print(name);
-              Serial.print(F(": calling gate_off against "));
-              Serial.println((uint32_t) &target);
+              //Serial.print(name);
+              //Serial.print(F(": calling gate_off against "));
+              //Serial.println((uint32_t) &target);
             }
             target->gate_off();
           }
@@ -157,8 +164,8 @@ class AnalogGateInput : public GateInput {
 
     AnalogGateInput(int in_inputPin, Voice &target)
       : GateInput{in_inputPin, target} {
-      Serial.print(F("AnalogGateInput instantiated, passed Voice "));
-      Serial.println((uint32_t) &target);
+      //Serial.print(F("AnalogGateInput instantiated, passed Voice "));
+      //Serial.println((uint32_t) &target);
     }
     AnalogGateInput(int in_inputPin, Callback in_gate_on_callback, Callback in_gate_off_callback) 
       : GateInput (in_inputPin, in_gate_on_callback, in_gate_off_callback) 
@@ -166,11 +173,11 @@ class AnalogGateInput : public GateInput {
     
     bool read_value() {
       int areading = analogRead(inputPin); //>=768;
-      if (debug) {
+      /*if (debug) {
           Serial.print(name);
           Serial.print(F(": areading is "));
           Serial.println(areading);
-      }      
+      } */     
       int reading = areading >= trigger_level;
       return reading;    
   }
@@ -188,13 +195,13 @@ class DigitalGateInput : public GateInput {
     
     bool read_value() {
       int value = digitalRead(inputPin);
-      if (debug) {
+      /*if (debug) {
         Serial.print(name);
         Serial.print(F(": read_value from pin "));
         Serial.print(inputPin);
         Serial.print(F(" is "));
         Serial.println(value);
-      }
+      }*/
       return value;
     }
 };

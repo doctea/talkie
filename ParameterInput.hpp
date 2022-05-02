@@ -131,7 +131,7 @@ class AnalogParameterInput : public ParameterInput {
             Serial.println();
           }
           if (parameter_number!=0xff) {
-            Serial.print("calling setParamValue(");
+            Serial.print(F("calling setParamValue("));
             Serial.print(parameter_number);
             Serial.print(", ");
             Serial.print(normal);

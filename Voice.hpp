@@ -39,7 +39,8 @@ public:
   char word[20];
   char *get_next_word() {
     static int pointer;
-    static const char *words = "Deep Time: 1,000,000 mega-years. I saw the Milky Way, a wheeling carousel of fire, and Earth's remote descendants, countless races inhabiting every stellar system in the galaxy. The dark intervals between the stars were a continuously flickering field of light, a gigantic phosphorescent ocean, filled with the vibrating pulses of electromagnetic communication pathways. To cross the enormous voids between the stars they have progressively slowed their physiological time, first ten, then a hundred-fold, so accelerating stellar and galactic time. Space has become alive with transient swarms of comets and meteors, the constellations have begun to dislocate and shift, the slow majestic rotation of the universe itself is at last visible.";
+    //static const char *words = "Deep Time: 1,000,000 mega-years. I saw the Milky Way, a wheeling carousel of fire, and Earth's remote descendants, countless races inhabiting every stellar system in the galaxy. The dark intervals between the stars were a continuously flickering field of light, a gigantic phosphorescent ocean, filled with the vibrating pulses of electromagnetic communication pathways. To cross the enormous voids between the stars they have progressively slowed their physiological time, first ten, then a hundred-fold, so accelerating stellar and galactic time. Space has become alive with transient swarms of comets and meteors, the constellations have begun to dislocate and shift, the slow majestic rotation of the universe itself is at last visible.";
+    static const char *words = "oops.";
     static const int len = strlen(words);
 
     int i = 0;
@@ -51,7 +52,7 @@ public:
         if (i+pointer>len)
           pointer = 0;
         Serial.println(word);
-        return word[0];
+        return &word[0];
       }
     }
     word[i] = '\0';
@@ -73,6 +74,7 @@ public:
         words[i+pointer] = '\0';
         char *start = &words[pointer];
         Serial.println(start);
+        tft.println(start);
         pointer += i+1;
         return start;
       }
@@ -108,9 +110,9 @@ public:
     bool done = false;
     while ( OUTPUT_SERIAL.available() ) {
       char rc = OUTPUT_SERIAL.read();
-      Serial.print("received: ");
+      Serial.print(F("received: "));
       Serial.print(rc);
-      Serial.print(" (");
+      Serial.print(F(" ("));
       Serial.print((byte)rc);
       Serial.println(")");
       if ( rc == 0x4F ) {  
@@ -131,7 +133,7 @@ public:
     //OUTPUT_SERIAL.write((location << 4) | 0x00);
     OUTPUT_SERIAL.write(0b00110011);
     OUTPUT_SERIAL.write(msg);
-    Serial.print ("cached ");
+    Serial.print (F("cached "));
     Serial.println(msg);
   }
 
@@ -170,7 +172,7 @@ public:
     while ( ! done && (millis() - start) < timeout ) {
       while ( OUTPUT_SERIAL.available() ) {
         char rc = OUTPUT_SERIAL.read();
-        Serial.print("received: ");
+        Serial.print(F("received: "));
         Serial.println(rc);
         if ( rc == 0x4F ) {  
           done = true;
@@ -195,7 +197,7 @@ public:
       //get_next_word();
       //speak(word); //*get_next_word());
       speak(get_next_sentence());
-      Serial.println("spoke");
+      Serial.println(F("spoke"));
     }
     //speak("Beat!");
     //speak(buf);
