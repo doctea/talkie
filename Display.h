@@ -1,38 +1,54 @@
-#include <Adafruit_GFX.h>    // Core graphics library
-#include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
-#include <SPI.h>
+#include <ss_oled.h>
 
-#if defined(ARDUINO_FEATHER_ESP32) // Feather Huzzah32
-  #define TFT_CS         14
-  #define TFT_RST        15
-  #define TFT_DC         32
+#define USE_BACKBUFFER
 
-#elif defined(ESP8266)
-  #define TFT_CS         4
-  #define TFT_RST        16
-  #define TFT_DC         5
-
+#ifdef USE_BACKBUFFER
+static uint8_t ucBackBuffer[1024];
 #else
-  // For the breakout board, you can use any 2 or 3 pins.
-  // These pins will also work for the 1.8" TFT shield.
-  #define TFT_CS        10
-  #define TFT_RST       -1 // Or set to -1 and connect to Arduino RESET pin
-  #define TFT_DC         3
+static uint8_t *ucBackBuffer = NULL;
 #endif
 
-// OPTION 1 (recommended) is to use the HARDWARE SPI pins, which are unique
-// to each board and not reassignable. For Arduino Uno: MOSI = pin 11 and
-// SCLK = pin 13. This is the fastest mode of operation and is required if
-// using the breakout board's microSD card.
+// Use -1 for the Wire library default pins
+// or specify the pin numbers to use with the Wire library or bit banging on any GPIO pins
+// These are the pin numbers for the M5Stack Atom default I2C
+#define SDA_PIN 10
+#define SCL_PIN 9
+// Set this to -1 to disable or the GPIO pin number connected to the reset
+// line of your display if it requires an external reset
+#define RESET_PIN -1
+// let ss_oled figure out the display address
+#define OLED_ADDR -1
+// don't rotate the display
+#define FLIP180 1
+// don't invert the display
+#define INVERT 0
+// Bit-Bang the I2C bus
+#define USE_HW_I2C 0
 
-Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
+// Change these if you're using a different OLED display
+#define MY_OLED OLED_128x64
+#define OLED_WIDTH 128
+#define OLED_HEIGHT 64
+//#define MY_OLED OLED_64x32
+//#define OLED_WIDTH 64
+//#define OLED_HEIGHT 32
+
+SSOLED ssoled;
+
 
 void setup_display() {
+int rc;
 
-    tft.init(135, 240);           // Init ST7789 240x135
-
-    tft.fillScreen(ST77XX_BLACK);
-    //tft.setRotation(1);
-
-    tft.println("talkytalker...");
+  rc = oledInit(&ssoled, MY_OLED, OLED_ADDR, FLIP180, INVERT, USE_HW_I2C, SDA_PIN, SCL_PIN, RESET_PIN, 400000L); // use standard I2C bus at 400Khz
+  if (rc != OLED_NOT_FOUND)
+  {
+    char *msgs[] = {(char *)"SSD1306 @ 0x3C", (char *)"SSD1306 @ 0x3D",(char *)"SH1106 @ 0x3C",(char *)"SH1106 @ 0x3D"};
+    oledFill(&ssoled, 0, 1);
+    oledWriteString(&ssoled, 0,0,0,msgs[rc], FONT_NORMAL, 0, 1);
+    oledSetBackBuffer(&ssoled, ucBackBuffer);
+    delay(2000);
+  }
+  
+  oledFill(&ssoled, 0, 1);
+  oledWriteString(&ssoled, 0, 0, 0, "talkytalker...", FONT_NORMAL, 0, 1);
 }

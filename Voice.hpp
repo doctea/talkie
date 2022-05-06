@@ -36,7 +36,7 @@ public:
     //"You're", "not ", "alone", ", Powers", ", ", "don't ", "think ", "you ", "are", ". ", "These ", "are ", "the ", "voices ", "of ", "time", ", ", "and ", "they're ", "all ", "saying ", "goodbye ", "to ", "you ", "... ", "every ", "particle ", "in ", "your ", "body", ", ", "every ", "grain ", "of ", "sand", "every ", "galaxy ", "carries ", "the ", "same ", "signature ", "... ", "you ", "know ", "what ", "the ", "time ", "is ";
   };
 
-  char word[20];
+  /*char word[20];
   char *get_next_word() {
     static int pointer;
     //static const char *words = "Deep Time: 1,000,000 mega-years. I saw the Milky Way, a wheeling carousel of fire, and Earth's remote descendants, countless races inhabiting every stellar system in the galaxy. The dark intervals between the stars were a continuously flickering field of light, a gigantic phosphorescent ocean, filled with the vibrating pulses of electromagnetic communication pathways. To cross the enormous voids between the stars they have progressively slowed their physiological time, first ten, then a hundred-fold, so accelerating stellar and galactic time. Space has become alive with transient swarms of comets and meteors, the constellations have begun to dislocate and shift, the slow majestic rotation of the universe itself is at last visible.";
@@ -58,11 +58,11 @@ public:
     word[i] = '\0';
     pointer = 0;
     return word[0];
-  }
+  }*/
 
   char *get_next_sentence() {
     static int pointer;
-    static char *words = "Deep Time. 1,000,000 mega-years. I saw the Milky Way, a wheeling carousel of fire, and Earth's remote descendants, countless races inhabiting every stellar system in the galaxy. The dark intervals between the stars were a continuously flickering field of light, a gigantic phosphorescent ocean, filled with the vibrating pulses of electromagnetic communication pathways. To cross the enormous voids between the stars they have progressively slowed their physiological time, first ten, then a hundred-fold, so accelerating stellar and galactic time. Space has become alive with transient swarms of comets and meteors, the constellations have begun to dislocate and shift, the slow majestic rotation of the universe itself is at last visible. ";
+    static char *words = "Deep Time. 1,000,000 mega-years. "; // I saw the Milky Way, a wheeling carousel of fire, and Earth's remote descendants, countless races inhabiting every stellar system in the galaxy. The dark intervals between the stars were a continuously flickering field of light, a gigantic phosphorescent ocean, filled with the vibrating pulses of electromagnetic communication pathways. To cross the enormous voids between the stars they have progressively slowed their physiological time, first ten, then a hundred-fold, so accelerating stellar and galactic time. Space has become alive with transient swarms of comets and meteors, the constellations have begun to dislocate and shift, the slow majestic rotation of the universe itself is at last visible. ";
     static const int len = strlen(words);
 
     words[len-1] = '\0';    // ensure that we end on a string termination.
@@ -74,7 +74,7 @@ public:
         words[i+pointer] = '\0';
         char *start = &words[pointer];
         Serial.println(start);
-        tft.println(start);
+        //tft.println(start);
         pointer += i+1;
         return start;
       }

@@ -118,7 +118,8 @@ class GateInput {
         }*/
         if (triggered) {
           //Serial.println(F("==== Gate triggered"));
-          tft.println("triggered!");
+          //tft.println("triggered!");
+          oledWriteString(&ssoled, 0,0,1, "triggered!", FONT_NORMAL, 0, 1);
           if (gate_on_callback != NULL) {
             /*if (debug) {
               Serial.print(name);
